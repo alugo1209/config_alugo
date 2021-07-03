@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment-withdrawal
+  labels:
+    app: service-withdrawal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: service-withdrawal
+  template:
+    metadata:
+      labels:
+        app: service-withdrawal
+    spec:
+      containers:
+      - name: service-withdrawal
+        image: alugo81/ms-withdrawal-v1
+        args: ["--spring.profiles.active=dev","--spring.cloud.config.uri=http://54.86.107.127:8888"]
+        ports:
+        - containerPort: 8007
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: app-service-withdrawal
+spec:
+  type: LoadBalancer
+  selector:
+    app: service-withdrawal
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8007

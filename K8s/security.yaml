@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment-security
+  labels:
+    app: service-security
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: service-security
+  template:
+    metadata:
+      labels:
+        app: service-security
+    spec:
+      containers:
+      - name: service-security
+        image: alugo81/ms-security-v1
+        args: ["--spring.profiles.active=dev","--spring.cloud.config.uri=http://54.86.107.127:8888"]
+        ports:
+        - containerPort: 8010
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: app-service-security
+spec:
+  type: LoadBalancer
+  selector:
+    app: service-security
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8010

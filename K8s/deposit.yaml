@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment-deposit
+  labels:
+    app: service-deposit
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: service-deposit
+  template:
+    metadata:
+      labels:
+        app: service-deposit
+    spec:
+      containers:
+      - name: service-deposit
+        image: alugo81/ms-deposit-v1
+        args: ["--spring.profiles.active=dev","--spring.cloud.config.uri=http://54.86.107.127:8888"]
+        ports:
+        - containerPort: 8006
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: app-service-deposit
+spec:
+  type: LoadBalancer
+  selector:
+    app: service-deposit
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8006

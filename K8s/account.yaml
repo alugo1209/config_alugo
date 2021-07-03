@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment-account
+  labels:
+    app: service-account
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: service-account
+  template:
+    metadata:
+      labels:
+        app: service-account
+    spec:
+      containers:
+      - name: service-account
+        image: alugo81/ms-account-v1
+        args: ["--spring.profiles.active=dev","--spring.cloud.config.uri=http://54.86.107.127:8888"]
+        ports:
+        - containerPort: 8081
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: app-service-account
+spec:
+  type: LoadBalancer
+  selector:
+    app: service-account
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8081
